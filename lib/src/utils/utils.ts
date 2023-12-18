@@ -13,3 +13,19 @@ export function getAppSyncUrl(): string {
     throw new Error('Error: AppSyncUrl not defined')
   }
 }
+
+export function getAccessKeyId(): string {
+  if(process.env.ACCESS_KEY_ID) {
+    return process.env.ACCESS_KEY_ID
+  } else {
+    throw new Error('Error: AccessKeyId not defined')
+  }
+}
+
+export function getSecretKey(): string {
+  if(process.env.SECRET_KEY) {
+    return process.env.SECRET_KEY
+  } else {
+    throw new Error('Error: SecretKey not defined')
+  }
+}

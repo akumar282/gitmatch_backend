@@ -11,6 +11,7 @@
     "cdk": "cdk"
   },
   "devDependencies": {
+    "@aws-sdk/types": "^3.468.0",
     "@types/aws-lambda": "^8.10.130",
     "@types/jest": "^29.5.8",
     "@types/node": "20.9.1",
@@ -29,8 +30,12 @@
     "typescript": "~5.2.2"
   },
   "dependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/signature-v4-crt": "^3.474.0",
+    "@aws-sdk/util-create-request": "^3.468.0",
     "aws-cdk-lib": "2.114.1",
     "constructs": "^10.0.0",
+    "graphql": "^16.8.1",
     "source-map-support": "^0.5.21"
   }
 }

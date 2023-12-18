@@ -3,7 +3,7 @@ import { Construct } from 'constructs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as apigateway from 'aws-cdk-lib/aws-apigateway'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
-import {getAppSyncKey, getAppSyncUrl} from './src/utils/utils'
+import {getAccessKeyId, getAppSyncKey, getAppSyncUrl, getSecretKey} from './src/utils/utils'
 
 
 export class GitmatchBackendStack extends cdk.Stack {
@@ -16,7 +16,9 @@ export class GitmatchBackendStack extends cdk.Stack {
       handler: 'projectMatchingHandler.handler',
       environment: {
         APPSYNC_URL: getAppSyncUrl(),
-        APPSYNC_KEY: getAppSyncKey()
+        APPSYNC_KEY: getAppSyncKey(),
+        ACCESS_KEY_ID: getAccessKeyId(),
+        SECRET_KEY: getSecretKey()
       }
     })
 
@@ -75,8 +77,15 @@ export class GitmatchBackendStack extends cdk.Stack {
 
     retrieveMatchesAPI.root.addResource('matches').addResource('{userID}').addMethod('GET', getMatchesIntegration)
 
-    const resource = matchNumberAPI.root.addResource('user').addResource('{userId}')
-    resource.addMethod('GET', getMatchNumberIntegration)
+    const resource = matchNumberAPI.root.addResource('record').addResource('{id}')
+    resource.addMethod('GET', getMatchNumberIntegration, 
+      { 
+        requestParameters: {
+          'method.request.querystring.userId': false
+        }
+      }
+    )
+    
     resource.addMethod('POST', getMatchNumberIntegration)
     resource.addMethod('PATCH', getMatchNumberIntegration)
   }

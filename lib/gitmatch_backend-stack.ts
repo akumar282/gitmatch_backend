@@ -18,34 +18,40 @@ export class GitmatchBackendStack extends cdk.Stack {
         APPSYNC_URL: getAppSyncUrl(),
         APPSYNC_KEY: getAppSyncKey(),
         ACCESS_KEY_ID: getAccessKeyId(),
-        SECRET_KEY: getSecretKey()
+        SECRET_ACCESS_KEY: getSecretKey()
       }
     })
 
     const matchNumberLambda = new lambda.Function(this, 'MatchNumberLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('lib/src/lambda'),
-      handler: 'matchNumberHandler.handler'
+      handler: 'matchNumberHandler.handler',
+      environment: {
+        TABLE_NAME: 'matchNumberTable'
+      }
     })
 
     const matchNumberTable = new dynamodb.Table(this, 'matchNumberTable', {
+      tableName: 'matchNumberTable',
       partitionKey: {
         name: 'id',
         type: dynamodb.AttributeType.STRING
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      sortKey: {name: 'createdAt', type: dynamodb.AttributeType.NUMBER},
       pointInTimeRecovery: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
     })
 
-    matchNumberTable.addLocalSecondaryIndex({
+    matchNumberTable.addGlobalSecondaryIndex({
       indexName: 'userIdIndex',
-      sortKey: {
+      partitionKey: {
         name: 'userId',
         type: dynamodb.AttributeType.STRING
-      }
+      },
+      projectionType: dynamodb.ProjectionType.ALL
     })
+
+    matchNumberTable.grantReadWriteData(matchNumberLambda)
 
     const retrieveMatchesAPI = new apigateway.RestApi(this, 'matches-api', {
       restApiName: 'matchesRetrievalAPI',
@@ -77,16 +83,26 @@ export class GitmatchBackendStack extends cdk.Stack {
 
     retrieveMatchesAPI.root.addResource('matches').addResource('{userID}').addMethod('GET', getMatchesIntegration)
 
-    const resource = matchNumberAPI.root.addResource('record').addResource('{id}')
-    resource.addMethod('GET', getMatchNumberIntegration, 
-      { 
+    const resource = matchNumberAPI.root.addResource('record')
+    resource.addMethod('GET', getMatchNumberIntegration,
+      {
         requestParameters: {
           'method.request.querystring.userId': false
         }
       }
     )
-    
-    resource.addMethod('POST', getMatchNumberIntegration)
-    resource.addMethod('PATCH', getMatchNumberIntegration)
+
+    resource.addMethod('POST', getMatchNumberIntegration,
+      {
+        requestParameters: {
+          'method.request.querystring.userId': false
+        }
+      }
+    )
+
+    const recordIdResource = resource.addResource('{id}')
+    recordIdResource.addMethod('GET', getMatchNumberIntegration)
+    recordIdResource.addMethod('POST', getMatchNumberIntegration)
+    recordIdResource.addMethod('PATCH', getMatchNumberIntegration)
   }
 }

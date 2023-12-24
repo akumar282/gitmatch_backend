@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
-import { GitmatchBackendStack } from '../lib/gitmatch_backend-stack'
+import { GitmatchBackendStack } from '@lib/gitmatch_backend-stack'
 
 const app = new cdk.App()
 new GitmatchBackendStack(app, 'GitmatchBackendStack', {
@@ -15,7 +15,7 @@ new GitmatchBackendStack(app, 'GitmatchBackendStack', {
 
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+  env: { account: '739292628626', region: 'us-west-2' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 })

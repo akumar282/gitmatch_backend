@@ -14,13 +14,13 @@ const signer = new CrtSignerV4({
   sha256: Sha256
 })
 
-export async function signedAppSyncQuery(query: string | DocumentNode, method: requestHttpMethod, variables: never) {
+export async function signedAppSyncQuery(query: string | DocumentNode, method: requestHttpMethod, variables: object) {
   const body = JSON.stringify({query, variables})
   const request = {
     method: method,
     headers: {
       'Content-Type': 'application/graphql',
-      'host' : new URL(getAppSyncUrl()).hostname
+      'host' : new URL(getAppSyncUrl()).hostname,
     },
     protocol: 'https:',
     hostname: new URL(getAppSyncUrl()).hostname,

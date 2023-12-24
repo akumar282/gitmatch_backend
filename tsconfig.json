@@ -6,6 +6,7 @@
       "es2020",
       "dom"
     ],
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -22,10 +23,19 @@
     "strictPropertyInitialization": false,
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@lib/*": ["lib/*"]
+    }
   },
   "exclude": [
     "node_modules",
     "cdk.out"
-  ]
+  ],
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  }
 }

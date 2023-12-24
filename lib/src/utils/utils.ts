@@ -1,14 +1,14 @@
 export function getAppSyncKey(): string {
-  if(process.env.AppSyncKey) {
-    return process.env.AppSyncKey
+  if(process.env.APPSYNC_KEY) {
+    return process.env.APPSYNC_KEY
   } else {
     throw new Error('Error: AppSyncKey not defined')
   }
 }
 
 export function getAppSyncUrl(): string {
-  if(process.env.AppSyncUrl) {
-    return process.env.AppSyncUrl
+  if(process.env.APPSYNC_URL) {
+    return process.env.APPSYNC_URL
   } else {
     throw new Error('Error: AppSyncUrl not defined')
   }
@@ -23,8 +23,8 @@ export function getAccessKeyId(): string {
 }
 
 export function getSecretKey(): string {
-  if(process.env.SECRET_KEY) {
-    return process.env.SECRET_KEY
+  if(process.env.SECRET_ACCESS_KEY) {
+    return process.env.SECRET_ACCESS_KEY
   } else {
     throw new Error('Error: SecretKey not defined')
   }

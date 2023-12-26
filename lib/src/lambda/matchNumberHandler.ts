@@ -44,7 +44,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
         }
       }
     }
-    case '/record/{id}': {
+    case '/record/': {
       switch (event.httpMethod) {
         case 'GET' : {
           const id = event.pathParameters?.id

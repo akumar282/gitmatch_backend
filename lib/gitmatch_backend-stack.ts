@@ -3,7 +3,7 @@ import { Construct } from 'constructs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as apigateway from 'aws-cdk-lib/aws-apigateway'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
-import {getAccessKeyId, getAppSyncKey, getAppSyncUrl, getSecretKey} from './src/utils/utils'
+import {getAccessKeyId, getAppSyncKey, getAppSyncUrl, getMatchAPI, getSecretKey} from './src/utils/utils'
 
 
 export class GitmatchBackendStack extends cdk.Stack {
@@ -12,19 +12,20 @@ export class GitmatchBackendStack extends cdk.Stack {
 
     const projectMatchingLambda = new lambda.Function(this, 'ProjectMatchingLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
-      code: lambda.Code.fromAsset('lib/src/lambda'),
+      code: lambda.Code.fromAsset('dist'),
       handler: 'projectMatchingHandler.handler',
       environment: {
         APPSYNC_URL: getAppSyncUrl(),
         APPSYNC_KEY: getAppSyncKey(),
         ACCESS_KEY_ID: getAccessKeyId(),
-        SECRET_ACCESS_KEY: getSecretKey()
+        SECRET_ACCESS_KEY: getSecretKey(),
+        MATCH_NUMBER_API: getMatchAPI()
       }
     })
 
     const matchNumberLambda = new lambda.Function(this, 'MatchNumberLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
-      code: lambda.Code.fromAsset('lib/src/lambda'),
+      code: lambda.Code.fromAsset('dist'),
       handler: 'matchNumberHandler.handler',
       environment: {
         TABLE_NAME: 'matchNumberTable'

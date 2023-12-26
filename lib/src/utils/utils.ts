@@ -29,3 +29,11 @@ export function getSecretKey(): string {
     throw new Error('Error: SecretKey not defined')
   }
 }
+
+export function getMatchAPI(): string {
+  if(process.env.MATCH_NUMBER_API) {
+    return process.env.MATCH_NUMBER_API
+  } else {
+    throw new Error('Error: Match API endpoint not defined')
+  }
+}

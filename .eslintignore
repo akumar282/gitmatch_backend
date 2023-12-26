@@ -1,0 +1,7 @@
+src\models
+**/*.js
+**/*.jsx
+src/graphql/*
+amplify-codegen-temp\models
+
+amplify-codegen-temp\models\models

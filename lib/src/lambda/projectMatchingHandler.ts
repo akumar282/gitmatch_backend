@@ -1,8 +1,11 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult, Context} from 'aws-lambda'
-import {matchDataRequest} from '@lib/src/utils/appsyncRequest'
 import {requestHttpMethod} from '@lib/src/utils/enums'
+import {getMatchAPI} from '@lib/src/utils/utils'
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
+
+  const api = getMatchAPI()
+
   try{
     const userId = event.pathParameters?.id
     if(!userId){
@@ -12,12 +15,23 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
         body: JSON.stringify({error: 'id is missing in the path parameters'})
       }
     } else {
+      const getRequest = {
+        method: requestHttpMethod.GET,
+        headers: {
+          'Content-Type': 'application/json',
+          'host' : new URL(getMatchAPI()).hostname,
+        },
+        protocol: 'https:',
+        hostname: new URL(getMatchAPI()).hostname,
+        path: `record?userId=${userId}`
+      }
+      const url = api.concat(getRequest.path)
+      const existingRecord = await fetch(url, getRequest)
 
-      const getMatchNumber = await matchDataRequest(requestHttpMethod.GET, {queryStringParameters: {'userId': '123'}})
       return {
         headers: {'Content-Type': 'application/json'},
         statusCode: 200,
-        body: JSON.stringify(getMatchNumber)
+        body: JSON.stringify(await existingRecord.json())
       }
     }
   } catch (error) {

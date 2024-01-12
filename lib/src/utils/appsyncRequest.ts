@@ -1,8 +1,8 @@
-import { SignatureV4 } from '@aws-sdk/signature-v4'
-import { Sha256 } from '@aws-crypto/sha256-js'
-import { DocumentNode } from 'graphql/language'
-import { requestHttpMethod } from './enums'
-import {getAccessKeyId, getAppSyncUrl, getSecretKey} from './utils'
+import {SignatureV4} from '@aws-sdk/signature-v4'
+import {Sha256} from '@aws-crypto/sha256-js'
+import {DocumentNode} from 'graphql/language'
+import {requestHttpMethod} from './enums'
+import {getAccessKeyId, getAppSyncUrl, getMatchAPI, getSecretKey} from './utils'
 
 const appsyncSigner = new SignatureV4({
   credentials: {
@@ -42,4 +42,41 @@ export async function signedAppSyncQuery(query: string | DocumentNode, method: r
 
   return response.json()
 
+}
+
+export async function requestWithBody(
+  path: string,
+  url: string,
+  body: object,
+  method: requestHttpMethod
+) {
+  const postRequest = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+      'host' : new URL(url).hostname,
+    },
+    protocol: 'https:',
+    hostname: new URL(url).hostname,
+    body: JSON.stringify(body),
+    path: path
+  }
+  const requestURI = url.concat(postRequest.path)
+  return await fetch(requestURI, postRequest)
+}
+
+export async function getRequest(path: string, url: string, id: string) {
+  const constructedPath = path.concat(id)
+  const getRequest = {
+    method: requestHttpMethod.POST,
+    headers: {
+      'Content-Type': 'application/json',
+      'host' : new URL(url).hostname,
+    },
+    protocol: 'https:',
+    hostname: new URL(url).hostname,
+    path: constructedPath
+  }
+  const requestURI = url.concat(getRequest.path)
+  return await fetch(requestURI, getRequest)
 }

@@ -8,67 +8,32 @@ const docClient = DynamoDBDocumentClient.from(client)
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
   switch (event.path) {
     case '/record': {
-      const userId = event.queryStringParameters?.userId
-      if (!userId) {
-        return {
-          headers: { 'Content-Type': 'application/json' },
-          statusCode: 400,
-          body: JSON.stringify({ error: 'UserId is missing in the query parameters' })
-        }
-      } else {
-        const command = new QueryCommand({
-          TableName: 'matchNumberTable',
-          IndexName: 'userIdIndex', // Specify the GSI name
-          KeyConditionExpression: 'userId = :userId',
-          ExpressionAttributeValues: {
-            ':userId': userId
-          }
-        })
-        const result = await docClient.send(command)
-        if(result) {
-          return {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            statusCode: 200,
-            body: JSON.stringify(result.Items)
-          }
-        } else {
-          return {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            statusCode: 400,
-            body: event.path + ' ' + event.queryStringParameters
-          }
-        }
-      }
-    }
-    case '/record/': {
       switch (event.httpMethod) {
         case 'GET' : {
-          const id = event.pathParameters?.id
-          if (!id) {
+          const userId = event.queryStringParameters?.userId
+          if (!userId) {
             return {
-              headers: {'Content-Type': 'application/json'},
+              headers: { 'Content-Type': 'application/json' },
               statusCode: 400,
-              body: JSON.stringify({error: 'id is missing in the path parameters'})
+              body: JSON.stringify({ error: 'UserId is missing in the query parameters' })
             }
           } else {
-            const command = new GetCommand({
+            const command = new QueryCommand({
               TableName: 'matchNumberTable',
-              Key: {
-                id: id
+              IndexName: 'userIdIndex', // Specify the GSI name
+              KeyConditionExpression: 'userId = :userId',
+              ExpressionAttributeValues: {
+                ':userId': userId
               }
             })
             const result = await docClient.send(command)
-            if (result) {
+            if(result) {
               return {
                 headers: {
                   'Content-Type': 'application/json'
                 },
                 statusCode: 200,
-                body: JSON.stringify(result.Item)
+                body: JSON.stringify(result.Items)
               }
             } else {
               return {
@@ -76,7 +41,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
                   'Content-Type': 'application/json'
                 },
                 statusCode: 400,
-                body: JSON.stringify({error: 'No item found with the provided id'})
+                body: event.path + ' ' + event.queryStringParameters
               }
             }
           }
@@ -115,6 +80,54 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
                 },
                 statusCode: 400,
                 body: JSON.stringify({error: 'Error placing item '} + event.body)
+              }
+            }
+          }
+        }
+        default: {
+          return {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            statusCode: 405,
+            body: 'Operation Not Supported ' + event + ' ' + context
+          }
+        }
+      }
+    }
+    case '/record/': {
+      switch (event.httpMethod) {
+        case 'GET' : {
+          const id = event.pathParameters?.id
+          if (!id) {
+            return {
+              headers: {'Content-Type': 'application/json'},
+              statusCode: 400,
+              body: JSON.stringify({error: 'id is missing in the path parameters'})
+            }
+          } else {
+            const command = new GetCommand({
+              TableName: 'matchNumberTable',
+              Key: {
+                id: id
+              }
+            })
+            const result = await docClient.send(command)
+            if (result) {
+              return {
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                statusCode: 200,
+                body: JSON.stringify(result.Item)
+              }
+            } else {
+              return {
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                statusCode: 400,
+                body: JSON.stringify({error: 'No item found with the provided id'})
               }
             }
           }

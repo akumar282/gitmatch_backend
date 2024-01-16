@@ -38,6 +38,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
           const user = await signedAppSyncQuery(getUsersModel, requestHttpMethod.POST, {id: userId})
 
           const preferenceData: userItem = {
+            id: user.data.getUsersModel.id,
             cloudProviderString: user.data.getUsersModel.cloud_provider_tag.toString(),
             devTypeString: user.data.getUsersModel.dev_type_tag.toString(),
             difficultyString: user.data.getUsersModel.difficulty_tag.toString(),

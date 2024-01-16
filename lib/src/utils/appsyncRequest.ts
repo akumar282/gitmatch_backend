@@ -2,7 +2,7 @@ import {SignatureV4} from '@aws-sdk/signature-v4'
 import {Sha256} from '@aws-crypto/sha256-js'
 import {DocumentNode} from 'graphql/language'
 import {requestHttpMethod} from './enums'
-import {getAccessKeyId, getAppSyncUrl, getMatchAPI, getSecretKey} from './utils'
+import {getAccessKeyId, getAppSyncUrl, getSecretKey} from './utils'
 
 const appsyncSigner = new SignatureV4({
   credentials: {
@@ -14,8 +14,14 @@ const appsyncSigner = new SignatureV4({
   sha256: Sha256
 })
 
-export async function signedAppSyncQuery(query: string | DocumentNode, method: requestHttpMethod, variables: object) {
-  const body = JSON.stringify({query, variables})
+export async function signedAppSyncQuery(query: string | DocumentNode, method: requestHttpMethod, variables?: object) {
+  let body: string
+  if(variables) {
+    body = JSON.stringify({query, variables})
+  } else {
+    body = JSON.stringify({query})
+  }
+
   const request = {
     method: method,
     headers: {

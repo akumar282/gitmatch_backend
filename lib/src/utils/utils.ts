@@ -37,3 +37,19 @@ export function getMatchAPI(): string {
     throw new Error('Error: Match API endpoint not defined')
   }
 }
+
+export function getOrgID(): string {
+  if(process.env.OPEN_AI_ORG_ID) {
+    return process.env.OPEN_AI_ORG_ID
+  } else {
+    throw new Error('Error: OPEN_AI_ORG_ID not defined')
+  }
+}
+
+export function getOpenAIKey(): string {
+  if(process.env.OPEN_AI_KEY) {
+    return process.env.OPEN_AI_KEY
+  } else {
+    throw new Error('Error: OPEN_AI_ORG_ID not defined')
+  }
+}

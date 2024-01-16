@@ -1,4 +1,5 @@
 export interface userItem {
+  id: string
   languageString: string
   devTypeString: string | null
   interestsString: string | null
@@ -6,4 +7,8 @@ export interface userItem {
   frameworkString: string | null
   difficultyString: string | null
   cloudProviderString: string | null
+}
+
+export interface postItem {
+
 }

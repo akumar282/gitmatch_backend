@@ -1,13 +1,19 @@
 import {requestWithBody, signedAppSyncQuery} from '@lib/src/utils/appsyncRequest'
-import {getUsersModel} from '@lib/src/graphql/queries'
+import {getUsersModel, listPostsModels} from '@lib/src/graphql/queries'
 import {requestHttpMethod} from '@lib/src/utils/enums'
 import {getMatchAPI} from '@lib/src/utils/utils'
 
 test('AppSync Request', async () => {
   const userId: string = 'af721c38-5aa2-447d-b722-f9f92666c6b4'
   const result = await signedAppSyncQuery(getUsersModel, requestHttpMethod.POST, {id: userId})
-  console.log(result)
+  console.log(JSON.stringify(result))
   expect(result.data.getUsersModel.id).toEqual(userId)
+})
+
+test('AppSync Posts', async () => {
+  const result = await signedAppSyncQuery(listPostsModels, requestHttpMethod.POST, {limit: 40})
+  console.log(JSON.stringify(result))
+  expect(result.data.listPostsModels.items[0].id).toEqual('cab5b12a-9187-4924-af23-4491569a18fb')
 })
 
 test('Get Request', async () => {

@@ -3,7 +3,15 @@ import { Construct } from 'constructs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as apigateway from 'aws-cdk-lib/aws-apigateway'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
-import {getAccessKeyId, getAppSyncKey, getAppSyncUrl, getMatchAPI, getSecretKey} from './src/utils/utils'
+import {
+  getAccessKeyId,
+  getAppSyncKey,
+  getAppSyncUrl,
+  getMatchAPI,
+  getOpenAIKey,
+  getOrgID,
+  getSecretKey
+} from './src/utils/utils'
 
 
 export class GitmatchBackendStack extends cdk.Stack {
@@ -19,7 +27,9 @@ export class GitmatchBackendStack extends cdk.Stack {
         APPSYNC_KEY: getAppSyncKey(),
         ACCESS_KEY_ID: getAccessKeyId(),
         SECRET_ACCESS_KEY: getSecretKey(),
-        MATCH_NUMBER_API: getMatchAPI()
+        MATCH_NUMBER_API: getMatchAPI(),
+        OPEN_AI_ORG_ID: getOrgID(),
+        OPEN_AI_KEY: getOpenAIKey()
       }
     })
 

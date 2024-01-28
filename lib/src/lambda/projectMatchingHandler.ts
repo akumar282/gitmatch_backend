@@ -1,55 +1,50 @@
-import {APIGatewayProxyEvent, Context} from 'aws-lambda'
+import {APIGatewayProxyEvent, APIGatewayProxyResult, Context} from 'aws-lambda'
 import {getMatchAPI} from '@lib/src/utils/utils'
-import {getRequest, requestWithBody, signedAppSyncQuery} from '@lib/src/utils/appsyncRequest'
+import {getRequest, requestWithBody} from '@lib/src/utils/requests'
 import {requestHttpMethod} from '@lib/src/utils/enums'
 import { v4 as uuidv4 } from 'uuid'
-import {getUsersModel} from '@lib/src/graphql/queries'
-import {userItem} from '@lib/src/utils/types'
+import {returnRecommendations} from '@lib/src/functions/functions'
 
-export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<unknown> {
+export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
 
   try{
-    const userId = event.pathParameters?.id
+    const userId = event.pathParameters?.userID
+    console.info(`Matching started for user ${userId}`)
     if(!userId){
       return {
         headers: {'Content-Type': 'application/json'},
         statusCode: 400,
-        body: JSON.stringify({error: 'id is missing in the path parameters'})
+        body: JSON.stringify({error: 'id is missing in the path parameters' + context})
       }
     } else {
       const existingRecord = await getRequest('record?userId=', getMatchAPI(), userId)
       const data = await existingRecord.json()
-      const recordQueryResult = JSON.parse(data.body)
-      const limitCheckStruct = recordQueryResult[0]
+      const limitCheckStruct = data[0]
 
-      if(recordQueryResult[0]){
-        if(limitCheckStruct.matchNumber <= 3){
+      if(limitCheckStruct){
+        if(limitCheckStruct.matchNumber >= 3){
           return {
             headers: {'Content-Type': 'application/json'},
             statusCode: 200,
             body: 'Match limit exceeded. Try again later'
           }
         } else {
+          console.log('Hit old record')
           const updatedMatchRecord = {
-            id: limitCheckStruct.id,
             matchNumber: limitCheckStruct.matchNumber + 1
           }
-          await requestWithBody('record', getMatchAPI(), updatedMatchRecord, requestHttpMethod.PATCH)
-          const user = await signedAppSyncQuery(getUsersModel, requestHttpMethod.POST, {id: userId})
+          await requestWithBody(`record/${limitCheckStruct.id}`, getMatchAPI(), updatedMatchRecord, requestHttpMethod.PATCH)
+          const userRecs = await returnRecommendations(userId)
 
-          const preferenceData: userItem = {
-            id: user.data.getUsersModel.id,
-            cloudProviderString: user.data.getUsersModel.cloud_provider_tag.toString(),
-            devTypeString: user.data.getUsersModel.dev_type_tag.toString(),
-            difficultyString: user.data.getUsersModel.difficulty_tag.toString(),
-            frameworkString: user.data.getUsersModel.framework_tag.toString(),
-            interestsString: user.data.getUsersModel.interest_tag.toString(),
-            sizeString: user.data.getUsersModel.size_tag.toString(),
-            languageString: user.data.getUsersModel.lang_tag.toString()
+          return {
+            headers: {'Content-Type': 'application/json'},
+            statusCode: 200,
+            body: JSON.stringify(userRecs)
           }
 
         }
       } else {
+        console.log('Hit new record creation')
         const newMatchRecord = {
           id: uuidv4(),
           userId: userId,
@@ -57,11 +52,14 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
           matchNumber: 1
         }
         await requestWithBody('record', getMatchAPI(), newMatchRecord, requestHttpMethod.POST)
-      }
-      return {
-        headers: {'Content-Type': 'application/json'},
-        statusCode: 200,
-        body: JSON.stringify(await existingRecord.json())
+
+        const userRecs = await returnRecommendations(userId)
+
+        return {
+          headers: {'Content-Type': 'application/json'},
+          statusCode: 200,
+          body: JSON.stringify(userRecs)
+        }
       }
     }
   } catch (error) {
@@ -72,5 +70,4 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
       body: eventInfo
     }
   }
-
 }

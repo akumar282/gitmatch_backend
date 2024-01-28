@@ -74,7 +74,7 @@ export async function requestWithBody(
 export async function getRequest(path: string, url: string, id: string) {
   const constructedPath = path.concat(id)
   const getRequest = {
-    method: requestHttpMethod.POST,
+    method: requestHttpMethod.GET,
     headers: {
       'Content-Type': 'application/json',
       'host' : new URL(url).hostname,

@@ -1,4 +1,4 @@
-import * as OpenAI from 'openai';
+import * as OpenAI from 'openai'
 import {getOpenAIKey, getOrgID} from '@lib/src/utils/utils'
 import {userItem} from '@lib/src/utils/types'
 

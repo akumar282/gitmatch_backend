@@ -12,6 +12,7 @@ import {
   getOrgID,
   getSecretKey
 } from './src/utils/utils'
+import {Duration} from 'aws-cdk-lib'
 
 
 export class GitmatchBackendStack extends cdk.Stack {
@@ -22,6 +23,7 @@ export class GitmatchBackendStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('dist'),
       handler: 'projectMatchingHandler.handler',
+      timeout: Duration.seconds(20),
       environment: {
         APPSYNC_URL: getAppSyncUrl(),
         APPSYNC_KEY: getAppSyncKey(),

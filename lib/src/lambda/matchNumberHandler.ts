@@ -6,7 +6,7 @@ const client = new DynamoDBClient({})
 const docClient = DynamoDBDocumentClient.from(client)
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
-  switch (event.path) {
+  switch (event.resource) {
     case '/record': {
       switch (event.httpMethod) {
         case 'GET' : {
@@ -95,7 +95,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
         }
       }
     }
-    case '/record/': {
+    case '/record/{id}': {
       switch (event.httpMethod) {
         case 'GET' : {
           const id = event.pathParameters?.id

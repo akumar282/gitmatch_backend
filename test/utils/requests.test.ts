@@ -17,10 +17,8 @@ test('AppSync GetPosts', async () => {
 })
 
 test('Get match record Request', async () => {
-
   const existingRecord = await getRequest('record?userId=', getMatchAPI(), '34')
   console.log(JSON.stringify(await existingRecord.json()))
-
 })
 
 test('Post to matchNumber api', async () => {

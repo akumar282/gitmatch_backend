@@ -9,6 +9,9 @@ export interface userItem {
   cloudProviderString: string | null
 }
 
-export interface postItem {
-
+export interface recommendationInfo {
+  data: {
+    id: [string],
+    justification: string
+  }
 }

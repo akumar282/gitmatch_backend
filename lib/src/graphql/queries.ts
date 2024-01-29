@@ -20,10 +20,11 @@ export const getUsersModel = /* GraphQL */ `
 
 export const listPostsModels = /* GraphQL */ `
   query ListPostsModels(
+    $filter: ModelPostsModelFilterInput
     $limit: Int
     $nextToken: String
 ) {
-    listPostsModels(limit: $limit, nextToken: $nextToken) {
+    listPostsModels(filter: $filter, limit: $limit, nextToken: $nextToken) {
         items {
             id
             post_title
@@ -43,4 +44,43 @@ export const listPostsModels = /* GraphQL */ `
         __typename
     }
 }
+`
+
+export const getPostsModel = /* GraphQL */ `
+    query GetPostsModel($id: ID!) {
+        getPostsModel(id: $id) {
+            id
+            post_title
+            description
+            long_description
+            project_link
+            image_link
+            post_date
+            userID
+            creator_name
+            lang_tag
+            dev_type_tag
+            interest_tag
+            size_tag
+            framework_tag
+            difficulty_tag
+            cloud_provider_tag
+            likes
+            likes_users
+            saves
+            post_comments {
+                nextToken
+                __typename
+            }
+            contributor_limit
+            contributors
+            reported
+            experience_level
+            application
+            project_chat
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
 `

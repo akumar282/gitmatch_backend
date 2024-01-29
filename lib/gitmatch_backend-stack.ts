@@ -7,7 +7,6 @@ import {
   getAccessKeyId,
   getAppSyncKey,
   getAppSyncUrl,
-  getMatchAPI,
   getOpenAIKey,
   getOrgID,
   getSecretKey
@@ -19,17 +18,29 @@ export class GitmatchBackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
+    const matchNumberAPI = new apigateway.RestApi(this, 'match-number-api', {
+      restApiName: 'matchNumberAPI',
+      description: 'This api retrieves the number of times a user has been matched to a project in one day'
+    })
+
+    const retrieveMatchesAPI = new apigateway.RestApi(this, 'matches-api', {
+      restApiName: 'matchesRetrievalAPI',
+      description: 'This api retrieves the project matches for a given user'
+    })
+
+    const matchNumberApiEndpoint = matchNumberAPI.url
+
     const projectMatchingLambda = new lambda.Function(this, 'ProjectMatchingLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('dist'),
       handler: 'projectMatchingHandler.handler',
-      timeout: Duration.seconds(20),
+      timeout: Duration.seconds(25),
       environment: {
         APPSYNC_URL: getAppSyncUrl(),
         APPSYNC_KEY: getAppSyncKey(),
         ACCESS_KEY_ID: getAccessKeyId(),
         SECRET_ACCESS_KEY: getSecretKey(),
-        MATCH_NUMBER_API: getMatchAPI(),
+        MATCH_NUMBER_API: matchNumberApiEndpoint,
         OPEN_AI_ORG_ID: getOrgID(),
         OPEN_AI_KEY: getOpenAIKey()
       }
@@ -66,15 +77,6 @@ export class GitmatchBackendStack extends cdk.Stack {
 
     matchNumberTable.grantReadWriteData(matchNumberLambda)
 
-    const retrieveMatchesAPI = new apigateway.RestApi(this, 'matches-api', {
-      restApiName: 'matchesRetrievalAPI',
-      description: 'This api retrieves the project matches for a given user'
-    })
-
-    const matchNumberAPI = new apigateway.RestApi(this, 'match-number-api', {
-      restApiName: 'matchNumberAPI',
-      description: 'This api retrieves the number of times a user has been matched to a project in one day'
-    })
 
     const getMatchesIntegration = new apigateway.LambdaIntegration(
       projectMatchingLambda,

@@ -3,7 +3,7 @@ import {getMatchAPI} from '@lib/src/utils/utils'
 import {getRequest, requestWithBody} from '@lib/src/utils/requests'
 import {requestHttpMethod} from '@lib/src/utils/enums'
 import { v4 as uuidv4 } from 'uuid'
-import {returnRecommendations} from '@lib/src/functions/functions'
+import {getRecommendationInfo, returnRecommendations} from '@lib/src/functions/functions'
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
 
@@ -35,11 +35,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
           }
           await requestWithBody(`record/${limitCheckStruct.id}`, getMatchAPI(), updatedMatchRecord, requestHttpMethod.PATCH)
           const userRecs = await returnRecommendations(userId)
+          const postInfo = await getRecommendationInfo(userRecs)
 
           return {
             headers: {'Content-Type': 'application/json'},
             statusCode: 200,
-            body: JSON.stringify(userRecs)
+            body: JSON.stringify(postInfo)
           }
 
         }
@@ -55,10 +56,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
 
         const userRecs = await returnRecommendations(userId)
 
+        const postInfo = await getRecommendationInfo(userRecs)
+
         return {
           headers: {'Content-Type': 'application/json'},
           statusCode: 200,
-          body: JSON.stringify(userRecs)
+          body: JSON.stringify(postInfo)
         }
       }
     }

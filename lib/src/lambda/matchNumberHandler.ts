@@ -60,8 +60,9 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
               Item: {
                 id: data.id,
                 userId: data.userId,
-                createdAt: data.createdAt,
-                matchNumber: data.matchNumber
+                createdAt: Date.now(),
+                matchNumber: data.matchNumber,
+                expires: Math.floor(Date.now() / 1000) + (24 * 60 * 60)
               }
             })
             const result = await docClient.send(command)

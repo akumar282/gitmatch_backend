@@ -63,7 +63,8 @@ export class GitmatchBackendStack extends cdk.Stack {
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       pointInTimeRecovery: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
+      removalPolicy: cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE,
+      timeToLiveAttribute: 'expires'
     })
 
     matchNumberTable.addGlobalSecondaryIndex({

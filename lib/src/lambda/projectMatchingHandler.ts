@@ -12,7 +12,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     console.info(`Matching started for user ${userId}`)
     if(!userId){
       return {
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+          'Access-Control-Allow-Methods': 'OPTIONS,GET,POST',
+          'Content-Type': 'application/json',
+        },
         statusCode: 400,
         body: JSON.stringify({error: 'id is missing in the path parameters' + context})
       }
@@ -24,7 +29,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
       if(limitCheckStruct){
         if(limitCheckStruct.matchNumber >= 3){
           return {
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+              'Access-Control-Allow-Methods': 'OPTIONS,GET,POST',
+              'Content-Type': 'application/json',
+            },
             statusCode: 200,
             body: 'Match limit exceeded. Try again later'
           }
@@ -38,7 +48,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
           const postInfo = await getRecommendationInfo(userRecs)
 
           return {
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+              'Access-Control-Allow-Methods': 'OPTIONS,GET,POST',
+              'Content-Type': 'application/json',
+            },
             statusCode: 200,
             body: JSON.stringify(postInfo)
           }
@@ -59,7 +74,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
         const postInfo = await getRecommendationInfo(userRecs)
 
         return {
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Methods': 'OPTIONS,GET,POST',
+            'Content-Type': 'application/json',
+          },
           statusCode: 200,
           body: JSON.stringify(postInfo)
         }
@@ -68,7 +88,12 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
   } catch (error) {
     const eventInfo = JSON.stringify({error, event, context})
     return {
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+        'Access-Control-Allow-Methods': 'OPTIONS,GET,POST',
+        'Content-Type': 'application/json',
+      },
       statusCode: 400,
       body: eventInfo
     }

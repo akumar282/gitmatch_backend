@@ -25,7 +25,13 @@ export class GitmatchBackendStack extends cdk.Stack {
 
     const retrieveMatchesAPI = new apigateway.RestApi(this, 'matches-api', {
       restApiName: 'matchesRetrievalAPI',
-      description: 'This api retrieves the project matches for a given user'
+      description: 'This api retrieves the project matches for a given user',
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS,
+        allowHeaders: ['Content-Type', 'X-Amz-Date', 'Authorization', 'X-Api-Key'],
+        allowCredentials: true,
+      }
     })
 
     const matchNumberApiEndpoint = matchNumberAPI.url
@@ -97,7 +103,8 @@ export class GitmatchBackendStack extends cdk.Stack {
       }
     )
 
-    retrieveMatchesAPI.root.addResource('matches').addResource('{userID}').addMethod('GET', getMatchesIntegration)
+    const retrieveMatchesAPIResource = retrieveMatchesAPI.root.addResource('matches').addResource('{userID}')
+    retrieveMatchesAPIResource.addMethod('GET', getMatchesIntegration)
 
     const resource = matchNumberAPI.root.addResource('record')
     resource.addMethod('GET', getMatchNumberIntegration,

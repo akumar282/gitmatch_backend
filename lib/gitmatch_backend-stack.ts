@@ -40,7 +40,7 @@ export class GitmatchBackendStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('dist'),
       handler: 'projectMatchingHandler.handler',
-      timeout: Duration.seconds(25),
+      timeout: Duration.seconds(30),
       environment: {
         APPSYNC_URL: getAppSyncUrl(),
         APPSYNC_KEY: getAppSyncKey(),

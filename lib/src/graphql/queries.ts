@@ -1,4 +1,4 @@
-export const getUsersModel = /* GraphQL */ `
+export const getUsersModel = `
     query GetUsersModel($id: ID!) {
         getUsersModel(id: $id) {
             id
@@ -18,7 +18,7 @@ export const getUsersModel = /* GraphQL */ `
     }
 `
 
-export const listPostsModels = /* GraphQL */ `
+export const listPostsModels = `
   query ListPostsModels(
     $filter: ModelPostsModelFilterInput
     $limit: Int
@@ -46,7 +46,7 @@ export const listPostsModels = /* GraphQL */ `
 }
 `
 
-export const getPostsModel = /* GraphQL */ `
+export const getPostsModel = `
     query GetPostsModel($id: ID!) {
         getPostsModel(id: $id) {
             id
@@ -73,7 +73,6 @@ export const getPostsModel = /* GraphQL */ `
                 __typename
             }
             contributor_limit
-            contributors
             reported
             experience_level
             application

@@ -25,7 +25,7 @@ export async function recommendations(userData: userItem, listPosts: object) {
       },
       { role: 'user', content: `${data}` },
     ],
-    model: 'gpt-3.5-turbo-1106',
+    model: 'gpt-4o',
     response_format: { type: 'json_object' },
   })
   return completion.choices[0].message.content

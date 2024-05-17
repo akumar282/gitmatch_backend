@@ -1,0 +1,57 @@
+import {Context, PreSignUpTriggerEvent} from 'aws-lambda'
+import {signedAppSyncQuery} from '@lib/src/utils/requests'
+import {createUsersModel} from '@lib/src/graphql/queries'
+import {requestHttpMethod} from '@lib/src/utils/enums'
+
+export async function handler(event: PreSignUpTriggerEvent, context: Context) {
+  try {
+    if(Object.prototype.hasOwnProperty.call(event.triggerSource, 'PreSignUp_ExternalProvider')) {
+      if(
+        Object.prototype.hasOwnProperty.call(event.request.userAttributes, 'custom:id') &&
+        Object.prototype.hasOwnProperty.call(event.request.userAttributes, 'email')
+      ) {
+        const id = event.request.userAttributes['custom:id']
+        const email = event.request.userAttributes['email']
+        const input = {
+          input: {
+            id: id,
+            user_name: 'google_notSet',
+            email: email,
+            password: 'password',
+            profile_image: 'defaultimg4.JPG',
+            user_creation_date: new Date().toISOString(),
+            lang_tag: [],
+            dev_type_tag: [],
+            interest_tag: [],
+            size_tag: [],
+            framework_tag: [],
+            difficulty_tag: [],
+            cloud_provider_tag: [],
+            liked_posts: [],
+            saved_posts: [],
+            hide_posts: [],
+            involved_projects: [],
+            experience_level: [],
+            new_user: true,
+            oauth_provider: 'GOOGLE',
+            oauth_id: id,
+            notification_type: 'EMAIL_AND_NEWSLETTER'
+          }
+        }
+        await signedAppSyncQuery(createUsersModel, requestHttpMethod.POST, input)
+        return event
+      }
+    } else {
+      return event
+    }
+  } catch (e) {
+    console.log(e)
+    console.log(event)
+    console.log(context)
+  }
+  return {
+    headers: { 'Content-Type': 'application/json' },
+    statusCode: 301,
+    body: JSON.stringify('Lambda executed with result')
+  }
+}

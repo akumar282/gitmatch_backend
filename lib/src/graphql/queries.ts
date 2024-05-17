@@ -83,3 +83,82 @@ export const getPostsModel = `
         }
     }
 `
+
+export const createUsersModel = `
+    mutation CreateUsersModel(
+        $input: CreateUsersModelInput!
+        $condition: ModelUsersModelConditionInput
+    ) {
+        createUsersModel(input: $input, condition: $condition) {
+            id
+            user_name
+            email
+            password
+            profile_image
+            bio
+            user_posts {
+                nextToken
+                __typename
+            }
+            user_comments {
+                nextToken
+                __typename
+            }
+            first_name
+            last_name
+            user_creation_date
+            github_link
+            liked_posts
+            saved_posts
+            hide_posts
+            saved {
+                nextToken
+                __typename
+            }
+            hidden {
+                nextToken
+                __typename
+            }
+            joined {
+                nextToken
+                __typename
+            }
+            messages {
+                nextToken
+                __typename
+            }
+            conversations {
+                nextToken
+                __typename
+            }
+            lang_tag
+            dev_type_tag
+            interest_tag
+            size_tag
+            framework_tag
+            difficulty_tag
+            cloud_provider_tag
+            new_user
+            contributions {
+                nextToken
+                __typename
+            }
+            credibility_score
+            involved_projects
+            experience_level
+            years_of_experience
+            user_type
+            user_experiences {
+                nextToken
+                __typename
+            }
+            oauth_provider
+            oauth_id
+            external_link
+            notification_type
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`

@@ -7,7 +7,8 @@ module.exports = {
   // Multiple entry points for each Lambda function
   entry: {
     matchNumberHandler: './lib/src/lambda/matchNumberHandler.ts',
-    projectMatchingHandler: './lib/src/lambda/projectMatchingHandler.ts'
+    projectMatchingHandler: './lib/src/lambda/projectMatchingHandler.ts',
+    federatedUserCreationHandler: './lib/src/lambda/federatedUserCreationHandler.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

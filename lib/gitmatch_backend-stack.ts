@@ -36,6 +36,19 @@ export class GitmatchBackendStack extends cdk.Stack {
 
     const matchNumberApiEndpoint = matchNumberAPI.url
 
+    const federatedUserCreationLambda = new lambda.Function(this,   'FederatedUserCreationLambda', {
+      runtime: lambda.Runtime.NODEJS_LATEST,
+      code: lambda.Code.fromAsset('dist'),
+      handler: 'federatedUserCreationHandler.handler',
+      timeout: Duration.seconds(20),
+      environment: {
+        APPSYNC_URL: getAppSyncUrl(),
+        APPSYNC_KEY: getAppSyncKey(),
+        ACCESS_KEY_ID: getAccessKeyId(),
+        SECRET_ACCESS_KEY: getSecretKey(),
+      }
+    })
+
     const projectMatchingLambda = new lambda.Function(this, 'ProjectMatchingLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('dist'),

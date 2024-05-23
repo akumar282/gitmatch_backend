@@ -34,12 +34,36 @@ export class GitmatchBackendStack extends cdk.Stack {
       }
     })
 
+    const tempIssueLikesAPI = new apigateway.RestApi(this, 'likes-api', {
+      restApiName: 'tempLikesAPI',
+      description: 'This api Issues likes temporarily',
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS,
+        allowHeaders: ['Content-Type', 'X-Amz-Date', 'Authorization', 'X-Api-Key'],
+        allowCredentials: true,
+      }
+    })
+
     const matchNumberApiEndpoint = matchNumberAPI.url
 
     const federatedUserCreationLambda = new lambda.Function(this,   'FederatedUserCreationLambda', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset('dist'),
       handler: 'federatedUserCreationHandler.handler',
+      timeout: Duration.seconds(20),
+      environment: {
+        APPSYNC_URL: getAppSyncUrl(),
+        APPSYNC_KEY: getAppSyncKey(),
+        ACCESS_KEY_ID: getAccessKeyId(),
+        SECRET_ACCESS_KEY: getSecretKey(),
+      }
+    })
+
+    const temporaryLikePostLambda = new lambda.Function(this,   'TemporaryLikePostLambda', {
+      runtime: lambda.Runtime.NODEJS_LATEST,
+      code: lambda.Code.fromAsset('dist'),
+      handler: 'temporaryLikePostHandler.handler',
       timeout: Duration.seconds(20),
       environment: {
         APPSYNC_URL: getAppSyncUrl(),
@@ -115,6 +139,23 @@ export class GitmatchBackendStack extends cdk.Stack {
         }
       }
     )
+
+    const tempIssueLikeGatewayIntegration = new apigateway.LambdaIntegration(
+      temporaryLikePostLambda ,
+      {
+        requestTemplates: {
+          'application/json': '{ \'statusCode\': 200 }'
+        }
+      }
+    )
+
+    const tempLikeResource = tempIssueLikesAPI.root.addResource('likes').addResource('{postId}')
+    tempLikeResource.addMethod('POST', tempIssueLikeGatewayIntegration,
+      {
+        requestParameters: {
+          'method.request.querystring.postId': false
+        }
+      })
 
     const retrieveMatchesAPIResource = retrieveMatchesAPI.root.addResource('matches').addResource('{userID}')
     retrieveMatchesAPIResource.addMethod('GET', getMatchesIntegration)

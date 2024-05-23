@@ -8,7 +8,8 @@ module.exports = {
   entry: {
     matchNumberHandler: './lib/src/lambda/matchNumberHandler.ts',
     projectMatchingHandler: './lib/src/lambda/projectMatchingHandler.ts',
-    federatedUserCreationHandler: './lib/src/lambda/federatedUserCreationHandler.ts'
+    federatedUserCreationHandler: './lib/src/lambda/federatedUserCreationHandler.ts',
+    temporaryLikePostHandler: './lib/src/lambda/temporaryLikePostHandler.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

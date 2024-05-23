@@ -46,44 +46,6 @@ export const listPostsModels = `
 }
 `
 
-export const getPostsModel = `
-    query GetPostsModel($id: ID!) {
-        getPostsModel(id: $id) {
-            id
-            post_title
-            description
-            long_description
-            project_link
-            image_link
-            post_date
-            userID
-            creator_name
-            lang_tag
-            dev_type_tag
-            interest_tag
-            size_tag
-            framework_tag
-            difficulty_tag
-            cloud_provider_tag
-            likes
-            likes_users
-            saves
-            post_comments {
-                nextToken
-                __typename
-            }
-            contributor_limit
-            reported
-            experience_level
-            application
-            project_chat
-            createdAt
-            updatedAt
-            __typename
-        }
-    }
-`
-
 export const createUsersModel = `
     mutation CreateUsersModel(
         $input: CreateUsersModelInput!
@@ -161,4 +123,97 @@ export const createUsersModel = `
             __typename
         }
     }
+`
+
+export const getPostsModel =
+    `query GetPostsModel($id: ID!) {
+        getPostsModel(id: $id) {
+            id
+            post_title
+            description
+            long_description
+            project_link
+            image_link
+            post_date
+            userID
+            creator_name
+            lang_tag
+            dev_type_tag
+            interest_tag
+            size_tag
+            framework_tag
+            difficulty_tag
+            cloud_provider_tag
+            likes
+            likes_users
+            saves
+            post_comments {
+                nextToken
+                __typename
+            }
+            contributor_limit
+            contributors {
+                nextToken
+                __typename
+            }
+            reported
+            experience_level
+            application
+            project_chat
+            counter
+            external_link
+            random_index
+            createdAt
+            updatedAt
+            __typename
+        }
+    }
+`
+
+export const updatePostsModel =
+  `mutation UpdatePostsModel(
+    $input: UpdatePostsModelInput!
+    $condition: ModelPostsModelConditionInput
+) {
+      updatePostsModel(input: $input, condition: $condition) {
+          id
+          post_title
+          description
+          long_description
+          project_link
+          image_link
+          post_date
+          userID
+          creator_name
+          lang_tag
+          dev_type_tag
+          interest_tag
+          size_tag
+          framework_tag
+          difficulty_tag
+          cloud_provider_tag
+          likes
+          likes_users
+          saves
+          post_comments {
+              nextToken
+              __typename
+          }
+          contributor_limit
+          contributors {
+              nextToken
+              __typename
+          }
+          reported
+          experience_level
+          application
+          project_chat
+          counter
+          external_link
+          random_index
+          createdAt
+          updatedAt
+          __typename
+      }
+  }
 `

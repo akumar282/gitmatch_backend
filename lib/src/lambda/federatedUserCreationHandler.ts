@@ -5,11 +5,14 @@ import {requestHttpMethod} from '@lib/src/utils/enums'
 
 export async function handler(event: PreSignUpTriggerEvent, context: Context) {
   try {
-    if(Object.prototype.hasOwnProperty.call(event.triggerSource, 'PreSignUp_ExternalProvider')) {
+    if(event.triggerSource === 'PreSignUp_ExternalProvider') {
+      console.log('presignup if was hit')
       if(
         Object.prototype.hasOwnProperty.call(event.request.userAttributes, 'custom:id') &&
         Object.prototype.hasOwnProperty.call(event.request.userAttributes, 'email')
       ) {
+        console.log('second if was hit')
+
         const id = event.request.userAttributes['custom:id']
         const email = event.request.userAttributes['email']
         const input = {
@@ -38,7 +41,8 @@ export async function handler(event: PreSignUpTriggerEvent, context: Context) {
             notification_type: 'EMAIL_AND_NEWSLETTER'
           }
         }
-        await signedAppSyncQuery(createUsersModel, requestHttpMethod.POST, input)
+        const result = await signedAppSyncQuery(createUsersModel, requestHttpMethod.POST, input)
+        console.log(result)
         return event
       }
     } else {

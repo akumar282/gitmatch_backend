@@ -12,6 +12,7 @@ import {
   getSecretKey
 } from './src/utils/utils'
 import {Duration} from 'aws-cdk-lib'
+import * as Process from 'process'
 
 
 export class GitmatchBackendStack extends cdk.Stack {
@@ -99,7 +100,7 @@ export class GitmatchBackendStack extends cdk.Stack {
     })
 
     const matchNumberTable = new dynamodb.Table(this, 'matchNumberTable', {
-      tableName: 'matchNumberTable',
+      tableName: 'matchNumberTable'+Process.env.ENV,
       partitionKey: {
         name: 'id',
         type: dynamodb.AttributeType.STRING

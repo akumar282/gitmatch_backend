@@ -1,7 +1,9 @@
-ifneq (,$(wildcard ./.env))
-    include .env
-    export
+ifneq ($(ENV),)
+    include .env.$(ENV)
+else
+    include .env.default
 endif
+export
 
 build:
 	npm run build
